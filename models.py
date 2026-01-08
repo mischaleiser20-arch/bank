@@ -46,12 +46,19 @@ class Berater:
         if not kunde:
             return "Kunde nicht betreut"
         kunde.konten.append(iban)
-        return Konto(iban)
 
 class Kredit:
-    def __init__(self, krnm, krb, lzm, zss):
+    def __init__(self, krnm, kdnr, krb, lzm, zss):
         self.kredit_nummer = krnm
+        self.kundennr = kdnr
         self.kredit_betrag = krb
         self.laufzeit_monate = lzm
         self.zinssatz = zss
         
+        self.zubezahlen = self.kredit_betrag
+        
+    def laufzeit_update(self, w_monat=1):
+        self.laufzeit_monate -= w_monat
+    
+    def rate_tilgen(self, wert):
+        self.zubezahlen -= wert

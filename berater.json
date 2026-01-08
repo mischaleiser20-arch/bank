@@ -1,1 +1,18 @@
-[]
+[
+    {
+        "brid": 93883,
+        "pw": "password3321",
+        "nachname": "Peterson",
+        "vorname": "Frank",
+        "betreute": [
+            220
+        ]
+    },
+    {
+        "brid": 72404,
+        "pw": "password2711",
+        "nachname": "tester",
+        "vorname": "test",
+        "betreute": []
+    }
+]

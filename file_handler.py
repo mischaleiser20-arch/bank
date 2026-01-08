@@ -56,8 +56,32 @@ def lade_kunde_from_email(email ,datei=KUNDEN_DATEI):
         if kunde.get("email") == email:
             return kunde
         
-def speicher_kunde():
-    pass
+def lade_kunde_from_kdnr(kdnr, datei=KUNDEN_DATEI):
+    kundendb = lade_json(datei)
+    for kunde in kundendb:
+        if kunde.get("kundennr") == kdnr:
+            return kunde
+        
+def speicher_kunde(kunde: Kunde, datei=KUNDEN_DATEI):
+    kundendb = lade_json(datei)
+    updated = False
+    for i,k in enumerate(kundendb):
+        if k.get("kundennr") == kunde.kundennr:
+            kundendb[i] = {
+                "kundennr": kunde.kundennr,
+                "nachname": kunde.nachname,
+                "vorname": kunde.vorname,
+                "anschrift": kunde.anschrift,
+                "email": kunde.email,
+                "l_pw": kunde.l_pw,
+                "konten": kunde.konten
+            }
+            updated = True
+            break
+        
+    if not updated:
+        raise ValueError(f"Kunde mit Kundennr {kunde.kundennr} nicht gefunden")
+    speichere_json(datei, kundendb)
 
 
 #Berater
@@ -89,7 +113,7 @@ def lad_berater_mit_brid(brid, datei=BERATER_DATEI):
                 berater["nachname"],
                 berater["vorname"]
             )
-            b.betreute = berater.get("betreute", {})
+            b.betreute = berater.get("betreute", [])
             return b
 
 

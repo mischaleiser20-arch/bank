@@ -27,3 +27,16 @@ def check_log_pw(email, pw, datei=KUNDEN_DATEI):
         return True
     else:
         return False
+    
+BERATER_DATEI = "berater.json"    
+
+def check_log_pw_b(brid, pw, datei=BERATER_DATEI):
+    beraterdb = lade_json(datei)
+    lpw = None
+    for berater in beraterdb:
+        if berater.get("brid") == brid:
+            lpw = berater.get("pw")
+    if lpw == pw:
+        return True
+    else:
+        return False
