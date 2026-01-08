@@ -1,6 +1,6 @@
 from models import Kunde, Konto, Berater
 import random
-from file_handler import erstell_kunde, lade_kunden_emails, lade_kunde_from_email, berater_einstellen, lade_kundennr, kunden_ohne_berater, lade_alle_berater_brid, akt_berater
+from file_handler import erstell_kunde, lade_kunden_emails, lade_kunde_from_email, berater_einstellen, lade_kundennr, kunden_ohne_berater, lade_alle_berater_brid, akt_berater, lad_berater_mit_brid
 from auth import check_log_pw
 
 def register_k():
@@ -35,14 +35,22 @@ def anmeldung_k():
             password = input("Gebe dein Password ein: ")
             if check_log_pw(email, password) == True:
                 kundedict = lade_kunde_from_email(email)
-                kunde = Kunde(**kundedict)
+                kunde = Kunde(
+                    kundedict["kundennr"],
+                    kundedict["nachname"],
+                    kundedict["vorname"],
+                    kundedict["anschrift"],
+                    kundedict["email"],
+                    kundedict["l_pw"]
+                )
+                kunde.konten = kundedict.get("konten", [])
                 app_k(kunde)
             else:
                 print("Wrong Password")
                 input("Press Enter to try again")
             
 def app_k(kunde: Kunde):
-    if kunde.konten == {}:
+    if kunde.konten == []:
         app_no_kon(kunde)
     else:
         app_kon(kunde)
@@ -120,8 +128,8 @@ def anmeldung_a():
         for i, x in enumerate(brid_list):
             if i+1 == choice:
                 to_be_linked_b = x
-        to_be_linked_b: Berater
-        to_be_linked_b.plus_kunde(to_be_linked_k)
+        berater_obj = lad_berater_mit_brid(to_be_linked_b)
+        berater_obj.plus_kunde(to_be_linked_k)
         
         akt_berater(to_be_linked_b)
         

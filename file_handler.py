@@ -38,11 +38,9 @@ def kunden_ohne_berater(datei=KUNDEN_DATEI):
     kundendb = lade_json(datei)
     kundenliste = []
     for kunde in kundendb:
-        if kunde.get("konto") == {}:
-            kundenliste.append(kunde.get("kundennr"))
+        if kunde.get("konten") == []:
+            kundenliste.append(kunde.get("kdnr") or kunde.get("kundennr"))
     return kundenliste
-            
-            
     
 def lade_kunden_emails(datei=KUNDEN_DATEI):
     kundendb = lade_json(datei)
@@ -80,6 +78,20 @@ def lade_alle_berater_brid(datei=BERATER_DATEI):
     for berater in beraterdb:
         listofbrid.append(berater.get("brid"))
     return listofbrid
+
+def lad_berater_mit_brid(brid, datei=BERATER_DATEI):
+    beraterdb = lade_json(datei)
+    for berater in beraterdb:
+        if berater.get("brid") == brid:
+            b = Berater(
+                berater["brid"],
+                berater["pw"],
+                berater["nachname"],
+                berater["vorname"]
+            )
+            b.betreute = berater.get("betreute", {})
+            return b
+
 
 def akt_berater(berater: Berater, datei=BERATER_DATEI):
     beraterdb = lade_json(datei)

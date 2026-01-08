@@ -18,14 +18,14 @@ class Konto:
         return f"IBAN: {self.iban} Kontostand: {self.saldo}"
 
 class Kunde:
-    def __init__(self, kdnr, nachname, vorname, anschrift, email, l_pw):
-        self.kundennr = kdnr
+    def __init__(self, kundennr, nachname, vorname, anschrift, email, l_pw):
+        self.kundennr = kundennr
         self.nachname = nachname
         self.vorname = vorname
         self.anschrift = anschrift
         self.email = email
         self.l_pw = l_pw
-        self.konten = {}
+        self.konten = []
 
 class Berater:
     def __init__(self, brid, pw, nachname, vorname):
@@ -33,10 +33,10 @@ class Berater:
         self.pw = pw
         self.nachname = nachname
         self.vorname = vorname
-        self.betreute = {}
+        self.betreute = []
 
-    def plus_kunde(self, kunde):
-        self.betreute[kunde.kundennr] = kunde
+    def plus_kunde(self, kundennr):
+        self.betreute.append(kundennr)
 
     def minus_kunde(self, kdnr):
         self.betreute.pop(kdnr, None)
@@ -45,7 +45,7 @@ class Berater:
         iban = "DE" + str(random.randint(100000000, 999999999))
         if not kunde:
             return "Kunde nicht betreut"
-        kunde.konten[iban] = Konto(iban)
+        kunde.konten.append(iban)
         return Konto(iban)
 
 class Kredit:

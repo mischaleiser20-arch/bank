@@ -1,38 +1,11 @@
 [
     {
-        "kundennr": 339,
+        "kundennr": 220,
         "nachname": "test",
         "vorname": "test",
-        "anschrift": "tes",
+        "anschrift": "test",
         "email": "test",
         "l_pw": "test",
-        "konten": {}
-    },
-    {
-        "kundennr": 285,
-        "nachname": "test123",
-        "vorname": "test123",
-        "anschrift": "test123",
-        "email": "test123",
-        "l_pw": "test123",
-        "konten": {}
-    },
-    {
-        "kundennr": 573,
-        "nachname": "testuser",
-        "vorname": "testuser",
-        "anschrift": "testort",
-        "email": "testemail",
-        "l_pw": "testpasswort",
-        "konten": {}
-    },
-    {
-        "kundennr": 911,
-        "nachname": "abba",
-        "vorname": "babba",
-        "anschrift": "kappa",
-        "email": "email123",
-        "l_pw": "passwort123",
-        "konten": {}
+        "konten": []
     }
 ]
