@@ -1,6 +1,6 @@
 from models import Kunde, Konto, Berater
 import random
-from file_handler import erstell_kunde, lade_kunden_emails, lade_kunde_from_email, berater_einstellen, lade_kundennr, kunden_ohne_berater, lade_alle_berater_brid, akt_berater, lad_berater_mit_brid, lade_kunde_from_kdnr, speicher_kunde
+from file_handler import erstell_kunde, lade_kunden_emails, lade_kunde_from_email, berater_einstellen, lade_kundennr, kunden_ohne_berater, lade_alle_berater_brid, akt_berater, lad_berater_mit_brid, lade_kunde_from_kdnr, speicher_kunde, lade_konto, erstelle_konto, speicher_konto
 from auth import check_log_pw, check_log_pw_b
 
 def register_k():
@@ -52,7 +52,14 @@ def app_k(kunde: Kunde):
     if kunde.konten == []:
         app_no_kon(kunde)
     else:
-        app_kon(kunde)
+        print("Du hast ein oder mehrer Konten wähle ein Konto aus")
+        for i, konto in enumerate(kunde.konten):
+            print(f"{i+1}. {konto}")
+        wahl_index = int(input("Deine Wahl: ")) - 1
+        konto_iban = kunde.konten[wahl_index]
+        kunde_konto = lade_konto(konto_iban)
+        
+        app_kon(kunde, kunde_konto)
 
 def app_no_kon(kunde: Kunde):
     while True:
@@ -68,9 +75,10 @@ def app_no_kon(kunde: Kunde):
         elif wahl == 2:
             break
 
-def app_kon(kunde: Kunde):
+def app_kon(kunde: Kunde, konto: Konto):
     while True:
-        print("Du hast ein Konto!")
+        konto_c = lade_konto(konto.iban)
+        print(f"Du bist auf dem Konto mit der Iban: {konto_c.iban}!")
         print("Wähle eine Option aus")
         print("1. Aktueller Kontostand")
         print("2. Einzahlen")
@@ -79,11 +87,31 @@ def app_kon(kunde: Kunde):
         print("5. Log out")
         wahl = int(input("Deine Wahl: "))
         if wahl == 1:
-            pass
+            print(f"Aktueller Kontostand beträgt: {konto_c.saldo}")
+            input("Drücke Enter um zurückzukehren")
         if wahl == 2:
-            pass
+            print(f"Dein Kontostand beträgt: {konto_c.saldo}.")
+            dep = int(input("Wie viel möchtest du einzahlen: "))
+            bes = input(f"Du bist dabei {dep}€ einzuzahlen.\n1. Bestätigung\n2. Abbruch\nBitte drücke die 1 um zu bestätigen: ") #irgendwas klapp hier nicht!!!
+            if bes == 1:
+                konto_c.einzahlen(dep)
+                speicher_konto(konto_c)
+                print(f"Transaktion vollendet")
+            elif bes == 2:
+                input("Die Transaktion Wurde abgebrochen")
         if wahl == 3:
-            pass
+            print(f"Dein Kontostand beträgt: {konto_c.saldo}.")
+            dep = int(input("Wie viel möchtest du auszahlen: "))
+            bes = input(
+                f"Du bist dabei {dep}€ auszuzahlen.\n1. Bestätigung\n2. Abbruch\nBitte drücke die 1 um zu bestätigen: "
+            )
+            if bes == 1:
+                konto_c.auszahlen(dep)
+                speicher_konto(konto_c)
+                input("Transaktion vollendet")
+            elif bes == 2:
+                input("Die Transaktion Wurde abgebrochen")
+                
         if wahl == 4:
             pass
         if wahl == 5:
@@ -181,9 +209,11 @@ def kundenverwaltung(b: Berater):
                     wahl = int(input("Wähle eine Option: "))
                     if wahl == 1:
                         b_kunde = lade_kunde_from_kdnr(k_kdnr)
-                        berater.konto_oeffnen(b_kunde)
+                        konto_iban = berater.konto_oeffnen(b_kunde)
                         speicher_kunde(b_kunde)
+                        kunde_konto = Konto(konto_iban)
                         input(f"Konto für den kunten mit der ID:{b_kunde.kundennr} wurde erstellt")
+                        erstelle_konto(kunde_konto)
                         
                     if wahl == 2:
                         break
@@ -205,7 +235,7 @@ def k_wahl():
             app_k(kunde)
         elif wahl == 3:
             break
-            
+
 
 def menu():
     while True:

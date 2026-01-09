@@ -132,4 +132,38 @@ def akt_berater(berater: Berater, datei=BERATER_DATEI):
     for berater_ob in beraterdb:
         if berater_ob.get("brid") == berater.brid:
             berater_ob["betreute"] = berater.betreute
-    speichere_json(datei, beraterdb)
+        speichere_json(datei, beraterdb)
+    
+    
+#Konto
+
+KONTO_DATEI = "konto.json"
+
+def erstelle_konto(konto: Konto, datei=KONTO_DATEI):
+    kontodb = lade_json(datei)
+    kontodb.append({
+        "iban": konto.iban,
+        "saldo": konto.saldo
+    })
+    speichere_json(datei, kontodb)
+    
+    
+def lade_konto(Iban_k, datei=KONTO_DATEI):
+    kontodb = lade_json(datei)
+    for konto in kontodb:
+        if konto.get("iban") == Iban_k:
+            k = Konto(
+                konto["iban"],
+                konto["saldo"]
+            )
+            return k
+        
+
+def speicher_konto(konto: Konto, datei=KONTO_DATEI):
+    kontodb = lade_json(datei)
+    for konto_ob in kontodb:
+        if konto_ob.get("iban") == konto.iban:
+            konto_ob["saldo"] = konto.saldo
+        speichere_json(datei, kontodb)
+        break
+            

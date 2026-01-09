@@ -46,6 +46,7 @@ class Berater:
         if not kunde:
             return "Kunde nicht betreut"
         kunde.konten.append(iban)
+        return iban
 
 class Kredit:
     def __init__(self, krnm, kdnr, krb, lzm, zss):
