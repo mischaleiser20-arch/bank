@@ -170,10 +170,10 @@ def kundenverwaltung(b: Berater):
         kunden = lade_kundennr()
         for i, kunde in enumerate(kunden):
             print(f"{i+1}. {kunde}")
-        wahl = int(input("Wähle einen Kunden: "))
-        k_kdnr = wahl
+        wahl = int(input("Wähle einen Kunden: ")) - 1
+        k_kdnr = kunden[wahl]
         for i, kunde in enumerate(kunden):
-            if i+1 == wahl:
+            if i == wahl:
                 while True:
                     print("1. Konto öffnen")
                     print("2. Zurück")
@@ -181,9 +181,9 @@ def kundenverwaltung(b: Berater):
                     wahl = int(input("Wähle eine Option: "))
                     if wahl == 1:
                         b_kunde = lade_kunde_from_kdnr(k_kdnr)
-                        print(b_kunde.kundennr)
                         berater.konto_oeffnen(b_kunde)
                         speicher_kunde(b_kunde)
+                        input(f"Konto für den kunten mit der ID:{b_kunde.kundennr} wurde erstellt")
                         
                     if wahl == 2:
                         break

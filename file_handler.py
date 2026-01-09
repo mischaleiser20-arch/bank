@@ -31,7 +31,7 @@ def lade_kundennr(datei=KUNDEN_DATEI):
     kundennrlist = []
     for kunde in kundendb:
         if "kundennr" in kunde:
-            kundennrlist.append(kunde["email"])
+            kundennrlist.append(kunde["kundennr"])
             return kundennrlist
         
 def kunden_ohne_berater(datei=KUNDEN_DATEI):
@@ -60,7 +60,16 @@ def lade_kunde_from_kdnr(kdnr, datei=KUNDEN_DATEI):
     kundendb = lade_json(datei)
     for kunde in kundendb:
         if kunde.get("kundennr") == kdnr:
-            return kunde
+            k = Kunde(
+                kunde["kundennr"],
+                kunde["nachname"],
+                kunde["vorname"],
+                kunde["anschrift"],
+                kunde["email"],
+                kunde["l_pw"]
+            )
+            k.konten = kunde.get("konten", [])
+            return k
         
 def speicher_kunde(kunde: Kunde, datei=KUNDEN_DATEI):
     kundendb = lade_json(datei)
@@ -82,6 +91,7 @@ def speicher_kunde(kunde: Kunde, datei=KUNDEN_DATEI):
     if not updated:
         raise ValueError(f"Kunde mit Kundennr {kunde.kundennr} nicht gefunden")
     speichere_json(datei, kundendb)
+    
 
 
 #Berater

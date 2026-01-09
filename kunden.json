@@ -6,7 +6,9 @@
         "anschrift": "test",
         "email": "test",
         "l_pw": "test",
-        "konten": []
+        "konten": [
+            "DE368706658"
+        ]
     },
     {
         "kundennr": 617,
