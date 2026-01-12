@@ -92,7 +92,7 @@ def app_kon(kunde: Kunde, konto: Konto):
         if wahl == 2:
             print(f"Dein Kontostand beträgt: {konto_c.saldo}.")
             dep = int(input("Wie viel möchtest du einzahlen: "))
-            bes = input(f"Du bist dabei {dep}€ einzuzahlen.\n1. Bestätigung\n2. Abbruch\nBitte drücke die 1 um zu bestätigen: ") #irgendwas klapp hier nicht!!!
+            bes = int(input(f"Du bist dabei {dep}€ einzuzahlen.\n1. Bestätigung\n2. Abbruch\nBitte drücke die 1 um zu bestätigen: ")) #irgendwas klapp hier nicht!!!
             if bes == 1:
                 konto_c.einzahlen(dep)
                 speicher_konto(konto_c)
@@ -102,9 +102,9 @@ def app_kon(kunde: Kunde, konto: Konto):
         if wahl == 3:
             print(f"Dein Kontostand beträgt: {konto_c.saldo}.")
             dep = int(input("Wie viel möchtest du auszahlen: "))
-            bes = input(
+            bes = int(input(
                 f"Du bist dabei {dep}€ auszuzahlen.\n1. Bestätigung\n2. Abbruch\nBitte drücke die 1 um zu bestätigen: "
-            )
+            ))
             if bes == 1:
                 konto_c.auszahlen(dep)
                 speicher_konto(konto_c)

@@ -164,6 +164,6 @@ def speicher_konto(konto: Konto, datei=KONTO_DATEI):
     for konto_ob in kontodb:
         if konto_ob.get("iban") == konto.iban:
             konto_ob["saldo"] = konto.saldo
-        speichere_json(datei, kontodb)
-        break
+    speichere_json(datei, kontodb)
+        
             
