@@ -1,5 +1,5 @@
 import json
-from models import Kunde, Berater, Konto
+from models import Kunde, Berater, Konto, Kredit
 
 def lade_json(datei):
     try:
@@ -12,7 +12,7 @@ def speichere_json(datei, daten):
     with open(datei, "w") as f:
         json.dump(daten, f, indent=4)
 
-#Kunde
+# Kunde
 KUNDEN_DATEI = "kunden.json"
 def erstell_kunde(kunde: Kunde, datei=KUNDEN_DATEI):
     kunden = lade_json(datei)
@@ -25,7 +25,7 @@ def erstell_kunde(kunde: Kunde, datei=KUNDEN_DATEI):
                    "konten": kunde.konten
                    })
     speichere_json(datei, kunden)
-    
+
 def lade_kundennr(datei=KUNDEN_DATEI):
     kundendb = lade_json(datei)
     kundennrlist = []
@@ -33,7 +33,7 @@ def lade_kundennr(datei=KUNDEN_DATEI):
         if "kundennr" in kunde:
             kundennrlist.append(kunde["kundennr"])
             return kundennrlist
-        
+
 def kunden_ohne_berater(datei=KUNDEN_DATEI):
     kundendb = lade_json(datei)
     kundenliste = []
@@ -41,7 +41,7 @@ def kunden_ohne_berater(datei=KUNDEN_DATEI):
         if kunde.get("konten") == []:
             kundenliste.append(kunde.get("kdnr") or kunde.get("kundennr"))
     return kundenliste
-    
+
 def lade_kunden_emails(datei=KUNDEN_DATEI):
     kundendb = lade_json(datei)
     emaillist = []
@@ -55,7 +55,7 @@ def lade_kunde_from_email(email ,datei=KUNDEN_DATEI):
     for kunde in kundendb:
         if kunde.get("email") == email:
             return kunde
-        
+
 def lade_kunde_from_kdnr(kdnr, datei=KUNDEN_DATEI):
     kundendb = lade_json(datei)
     for kunde in kundendb:
@@ -70,7 +70,7 @@ def lade_kunde_from_kdnr(kdnr, datei=KUNDEN_DATEI):
             )
             k.konten = kunde.get("konten", [])
             return k
-        
+
 def speicher_kunde(kunde: Kunde, datei=KUNDEN_DATEI):
     kundendb = lade_json(datei)
     updated = False
@@ -91,10 +91,9 @@ def speicher_kunde(kunde: Kunde, datei=KUNDEN_DATEI):
     if not updated:
         raise ValueError(f"Kunde mit Kundennr {kunde.kundennr} nicht gefunden")
     speichere_json(datei, kundendb)
-    
 
 
-#Berater
+# Berater
 BERATER_DATEI = "berater.json"
 
 def berater_einstellen(berater: Berater, datei=BERATER_DATEI):
@@ -105,7 +104,7 @@ def berater_einstellen(berater: Berater, datei=BERATER_DATEI):
                       "vorname": berater.vorname,
                       "betreute": berater.betreute})
     speichere_json(datei, beraterdb)
-    
+
 def lade_alle_berater_brid(datei=BERATER_DATEI):
     beraterdb = lade_json(datei)
     listofbrid = []
@@ -126,6 +125,20 @@ def lad_berater_mit_brid(brid, datei=BERATER_DATEI):
             b.betreute = berater.get("betreute", [])
             return b
 
+def lad_berater_mit_kunde(kunde: Kunde, datei=BERATER_DATEI):
+    beraterdb = lade_json(datei)
+    for berater in beraterdb:
+        for kundenr in berater.get("betreute", []):
+            if kundenr == kunde.kundennr:
+                b = Berater(
+                    berater["brid"],
+                    berater["pw"],
+                    berater["nachname"],
+                    berater["vorname"]
+                )
+                b.betreute = berater.get("betreute", [])
+                return b
+
 
 def akt_berater(berater: Berater, datei=BERATER_DATEI):
     beraterdb = lade_json(datei)
@@ -133,9 +146,9 @@ def akt_berater(berater: Berater, datei=BERATER_DATEI):
         if berater_ob.get("brid") == berater.brid:
             berater_ob["betreute"] = berater.betreute
         speichere_json(datei, beraterdb)
-    
-    
-#Konto
+
+
+# Konto
 
 KONTO_DATEI = "konto.json"
 
@@ -143,11 +156,12 @@ def erstelle_konto(konto: Konto, datei=KONTO_DATEI):
     kontodb = lade_json(datei)
     kontodb.append({
         "iban": konto.iban,
-        "saldo": konto.saldo
+        "saldo": konto.saldo,
+        "kredite": konto.kredite
     })
     speichere_json(datei, kontodb)
-    
-    
+
+
 def lade_konto(Iban_k, datei=KONTO_DATEI):
     kontodb = lade_json(datei)
     for konto in kontodb:
@@ -156,14 +170,50 @@ def lade_konto(Iban_k, datei=KONTO_DATEI):
                 konto["iban"],
                 konto["saldo"]
             )
+            k.kredite = konto.get("kredite", [])
             return k
-        
+
 
 def speicher_konto(konto: Konto, datei=KONTO_DATEI):
     kontodb = lade_json(datei)
     for konto_ob in kontodb:
         if konto_ob.get("iban") == konto.iban:
             konto_ob["saldo"] = konto.saldo
+            konto_ob["kredite"] = konto.kredite
     speichere_json(datei, kontodb)
-        
-            
+
+
+# Kredit
+KREDIT_DATEI = "kredite.json"
+
+def save_kredit(kredit: Kredit, datei=KREDIT_DATEI):
+    kreditedb = lade_json(datei)
+    kreditedb.append({
+        "kredit_nummer": kredit.kredit_nummer,
+        "kredit_betrag": kredit.kredit_betrag,
+        "laufzeit_monate": kredit.laufzeit_monate,
+        "zinssatz": kredit.zinssatz,
+        "zubezahlen": kredit.zubezahlen
+    })
+    speichere_json(datei, kreditedb)
+
+def lade_kredit(konto: Konto, datei=KREDIT_DATEI):
+    kreditedb = lade_json(datei)
+    for kredit in kreditedb:
+        if kredit.get("kredit_nummer") == konto.kredite[0]:
+            k = Kredit(
+                kredit["kredit_nummer"],
+                kredit["kredit_betrag"],
+                kredit["laufzeit_monate"],
+                kredit["zinssatz"],
+                kredit["zubezahlen"]
+            )
+            return k
+
+
+def akt_kredit(kredit: Kredit, datei=KREDIT_DATEI):
+    kreditedb = lade_json(datei)
+    for kredit_ob in kreditedb:
+        if kredit_ob.get("kreditnummer") == kredit.kredit_nummer:
+            kredit_ob["zubezahlen"] = kredit.zubezahlen
+        speichere_json(datei, kreditedb)

@@ -1,9 +1,27 @@
 import random
 
+class Kredit:
+    def __init__(self, krnm, krb, lzm, zss, zubzahlen=None):
+        self.kredit_nummer = krnm
+        self.kredit_betrag = krb
+        self.laufzeit_monate = lzm
+        self.zinssatz = zss
+        if zubzahlen == None:
+            self.zubezahlen = self.kredit_betrag
+        else:
+            self.zubezahlen = zubzahlen
+        
+    def laufzeit_update(self, w_monat=1):
+        self.laufzeit_monate -= w_monat
+    
+    def rate_tilgen(self, wert):
+        self.zubezahlen -= wert
+
 class Konto:
     def __init__(self, iban, saldo=0.0):
         self.iban = iban
         self.saldo = saldo
+        self.kredite = []
 
     def einzahlen(self, betrag):
         self.saldo += betrag
@@ -16,6 +34,10 @@ class Konto:
 
     def abfragen(self):
         return f"IBAN: {self.iban} Kontostand: {self.saldo}"
+    
+    def add_kredite(self, kredit: Kredit):
+        self.kredite.append(kredit.kredit_nummer)
+        self.saldo += kredit.kredit_betrag
 
 class Kunde:
     def __init__(self, kundennr, nachname, vorname, anschrift, email, l_pw):
@@ -47,19 +69,10 @@ class Berater:
             return "Kunde nicht betreut"
         kunde.konten.append(iban)
         return iban
-
-class Kredit:
-    def __init__(self, krnm, kdnr, krb, lzm, zss):
-        self.kredit_nummer = krnm
-        self.kundennr = kdnr
-        self.kredit_betrag = krb
-        self.laufzeit_monate = lzm
-        self.zinssatz = zss
-        
-        self.zubezahlen = self.kredit_betrag
-        
-    def laufzeit_update(self, w_monat=1):
-        self.laufzeit_monate -= w_monat
     
-    def rate_tilgen(self, wert):
-        self.zubezahlen -= wert
+    def kredit_genemigen(self, kunde=None):
+        pass
+
+
+        
+        

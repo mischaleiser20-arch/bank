@@ -1,0 +1,9 @@
+[
+    {
+        "type": "kredit",
+        "brid": 93883,
+        "iban": "DE111630040",
+        "betrag": 1000,
+        "laufzeit": 12
+    }
+]

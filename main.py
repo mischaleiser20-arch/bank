@@ -1,7 +1,8 @@
-from models import Kunde, Konto, Berater
+from models import Kunde, Konto, Berater, Kredit
 import random
-from file_handler import erstell_kunde, lade_kunden_emails, lade_kunde_from_email, berater_einstellen, lade_kundennr, kunden_ohne_berater, lade_alle_berater_brid, akt_berater, lad_berater_mit_brid, lade_kunde_from_kdnr, speicher_kunde, lade_konto, erstelle_konto, speicher_konto
+from file_handler import erstell_kunde, lade_kunden_emails, lade_kunde_from_email, berater_einstellen, lade_kundennr, kunden_ohne_berater, lade_alle_berater_brid, akt_berater, lad_berater_mit_brid, lade_kunde_from_kdnr, speicher_kunde, lade_konto, erstelle_konto, speicher_konto, lad_berater_mit_kunde, save_kredit, lade_kredit, akt_kredit
 from auth import check_log_pw, check_log_pw_b
+from request_handler import kredit_request, load_request
 
 def register_k():
     while True:
@@ -83,8 +84,9 @@ def app_kon(kunde: Kunde, konto: Konto):
         print("1. Aktueller Kontostand")
         print("2. Einzahlen")
         print("3. Auszahlen")
-        print("4. kontaktiere denen Berater")
+        print("4. kontaktiere deinen Berater")
         print("5. Log out")
+        print("6. Kredit verwalten")
         wahl = int(input("Deine Wahl: "))
         if wahl == 1:
             print(f"Aktueller Kontostand beträgt: {konto_c.saldo}")
@@ -113,9 +115,52 @@ def app_kon(kunde: Kunde, konto: Konto):
                 input("Die Transaktion Wurde abgebrochen")
                 
         if wahl == 4:
+            berater = lad_berater_mit_kunde(kunde)
+            berater: Berater
+            while True:
+                print("1. Kredit beantragen")
+                print("2. Zurück")
+                wahl = int(input("Gebe eine Angabe: "))
+                if wahl == 1:
+                    kredithoehe = int(input("Kredithöhe: "))
+                    laufzeit = int(input("Gewünschte Laufzeit in monaten: "))
+                    
+                    kredit_request(berater.brid, konto_c.iban, kredithoehe, laufzeit)
+                    
+                    
+                    
+                elif wahl == 2:
+                    break
             pass
         if wahl == 5:
             exit(100)
+            
+        if wahl == 6:
+            while True:
+                if konto_c.kredite == []:
+                    print("kein Kredit vorhanden")
+                else:
+                    kredit = lade_kredit(konto_c)
+                    print(f"Noch zu bezahlener Betrag: {kredit.zubezahlen}")
+                    print(f"Laufzeit: {kredit.laufzeit_monate} Monate")
+                    print(f"Zinsatz: {kredit.zinssatz}%")
+                    print()
+                    print("1. Kredit abbezahlen")
+                    print("2. Zurück")
+                    wahl = int(input("Input: "))
+                    if wahl == 1:
+                        menge = int(input("Wie viel möchtest du begleichen: "))
+                        if menge > konto_c.saldo:
+                            print("Du hast nicht soviel geld")
+                        else:
+                            kredit.zubezahlen -= menge
+                            konto_c.saldo -= menge
+                            speicher_konto(konto_c)
+                            akt_kredit(kredit)
+                            
+                            
+                    elif wahl == 2:
+                        break
 
 def anmeldung_b():
     while True:
@@ -184,12 +229,15 @@ def app_b(b: Berater):
         print(berater.brid)
         input("Du bist in Berater App")
         print("1. Kunden verwalten")
-        print("2. Logout")
+        print("2. Requests verwalten")
+        print("3. Logout")
         
         wahl = int(input("Wähle eine Option: "))
         if wahl == 1:
             kundenverwaltung(berater)
         elif wahl == 2:
+            requestverwaltung(berater)
+        elif wahl == 3:
             break
 
 def kundenverwaltung(b: Berater):
@@ -218,6 +266,40 @@ def kundenverwaltung(b: Berater):
                     if wahl == 2:
                         break
         break
+    
+def requestverwaltung(b: Berater):
+    while True:
+        berater = b
+        requests = load_request(berater)
+        if not requests:
+            print("Keine Requests vorhanden")
+            input("Press enter")
+            break
+        print("Konten welche Verwaltung benötigen:")
+        for i, r in enumerate(requests):
+            print(f"{i+1}: {r.get('iban')}")
+        print()
+        wahl = int(input("Wähle ein Konto: ")) - 1
+        iban = requests[wahl].get("iban")
+        print(f"Art der Request: {requests[wahl].get('type')}")
+        if requests[wahl].get("type") == "kredit":
+            print(f"Kredit höhe: {requests[wahl].get('betrag')}")
+            print(f"Gewünschte Laufzeit: {requests[wahl].get('laufzeit')}")
+            print()
+            entscheidung = int(input("Möchten sie diesen Kredit genehmigen (1= Ja)(2= Nein): "))
+            if entscheidung == 1:
+                kn = int(input("Gebe eine ID für den Kredit an max 5 zeichen: "))
+                zinss = int(input("Gebe den Zinssatz in Prozent an: "))
+                kredit = Kredit(kn, requests[wahl].get("betrag"), requests[wahl].get("laufzeit"), zinss)
+                konto = lade_konto(iban)
+                konto.add_kredite(kredit)
+                speicher_konto(konto)
+                save_kredit(kredit)
+                input("Kredit wurde genehmight! Drücke Enter")
+                break
+        
+                
+                
 
 def k_wahl():
     while True:

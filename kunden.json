@@ -1,32 +1,13 @@
 [
     {
-        "kundennr": 220,
+        "kundennr": 505,
         "nachname": "test",
         "vorname": "test",
         "anschrift": "test",
         "email": "test",
         "l_pw": "test",
         "konten": [
-            "DE781027055",
-            "DE896869388"
+            "DE111630040"
         ]
-    },
-    {
-        "kundennr": 617,
-        "nachname": "test2",
-        "vorname": "test2",
-        "anschrift": "test2",
-        "email": "test2",
-        "l_pw": "test2",
-        "konten": []
-    },
-    {
-        "kundennr": 835,
-        "nachname": "test3",
-        "vorname": "test3",
-        "anschrift": "test3",
-        "email": "test3",
-        "l_pw": "test3",
-        "konten": []
     }
 ]

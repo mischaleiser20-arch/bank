@@ -1,1 +1,9 @@
-[]
+[
+    {
+        "kredit_nummer": 1,
+        "kredit_betrag": 1000,
+        "laufzeit_monate": 12,
+        "zinssatz": 7,
+        "zubezahlen": 1000
+    }
+]
