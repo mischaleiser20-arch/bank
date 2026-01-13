@@ -13,6 +13,7 @@ class Kredit:
         
     def laufzeit_update(self, w_monat=1):
         self.laufzeit_monate -= w_monat
+        self.zubezahlen += (self.zinssatz / 100) * self.kredit_betrag
     
     def rate_tilgen(self, wert):
         self.zubezahlen -= wert
@@ -21,6 +22,7 @@ class Konto:
     def __init__(self, iban, saldo=0.0):
         self.iban = iban
         self.saldo = saldo
+        self.gesperrt = False
         self.kredite = []
 
     def einzahlen(self, betrag):
@@ -38,6 +40,18 @@ class Konto:
     def add_kredite(self, kredit: Kredit):
         self.kredite.append(kredit.kredit_nummer)
         self.saldo += kredit.kredit_betrag
+        
+    def remove_kredit(self, kredit: Kredit):
+        if kredit.kredit_nummer in self.kredite:
+            self.kredite.remove(kredit.kredit_nummer)
+        else:
+            print("Kredit nicht vorhanden")
+        
+    def konto_sperren(self):
+        self.gesperrt = True
+        
+    def konto_entsperren(self):
+        self.gesperrt = False
 
 class Kunde:
     def __init__(self, kundennr, nachname, vorname, anschrift, email, l_pw):

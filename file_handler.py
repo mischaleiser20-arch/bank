@@ -32,7 +32,7 @@ def lade_kundennr(datei=KUNDEN_DATEI):
     for kunde in kundendb:
         if "kundennr" in kunde:
             kundennrlist.append(kunde["kundennr"])
-            return kundennrlist
+    return kundennrlist
 
 def kunden_ohne_berater(datei=KUNDEN_DATEI):
     kundendb = lade_json(datei)
@@ -157,6 +157,7 @@ def erstelle_konto(konto: Konto, datei=KONTO_DATEI):
     kontodb.append({
         "iban": konto.iban,
         "saldo": konto.saldo,
+        "gesperrt": konto.gesperrt,
         "kredite": konto.kredite
     })
     speichere_json(datei, kontodb)
@@ -171,6 +172,21 @@ def lade_konto(Iban_k, datei=KONTO_DATEI):
                 konto["saldo"]
             )
             k.kredite = konto.get("kredite", [])
+            k.gesperrt = konto.get("gesperrt", False)
+            return k
+
+
+def lade_konto_mit_kreditnummer(kredit: Kredit, datei=KONTO_DATEI):
+    kontodb = lade_json(datei)
+    klist = [kredit.kredit_nummer]
+    for konto in kontodb:
+        if kredit.kredit_nummer in konto.get("kredite", []):
+            k = Konto(
+                konto["iban"],
+                konto["saldo"]
+            )
+            k.kredite = konto.get("kredite", [])
+            k.gesperrt = konto.get("gesperrt")
             return k
 
 
@@ -179,6 +195,7 @@ def speicher_konto(konto: Konto, datei=KONTO_DATEI):
     for konto_ob in kontodb:
         if konto_ob.get("iban") == konto.iban:
             konto_ob["saldo"] = konto.saldo
+            konto_ob["gesperrt"] = konto.gesperrt
             konto_ob["kredite"] = konto.kredite
     speichere_json(datei, kontodb)
 
@@ -210,10 +227,30 @@ def lade_kredit(konto: Konto, datei=KREDIT_DATEI):
             )
             return k
 
+def lade_kredite(datei=KREDIT_DATEI):
+    kreditedb = lade_json(datei)
+    krediteliste = []
+    for kredit in kreditedb:
+        k = Kredit(
+            kredit["kredit_nummer"],
+            kredit["kredit_betrag"],
+            kredit["laufzeit_monate"],
+            kredit["zinssatz"],
+            kredit["zubezahlen"],
+        )
+        krediteliste.append(k)
+    return krediteliste
+
 
 def akt_kredit(kredit: Kredit, datei=KREDIT_DATEI):
     kreditedb = lade_json(datei)
     for kredit_ob in kreditedb:
-        if kredit_ob.get("kreditnummer") == kredit.kredit_nummer:
+        if kredit_ob.get("kredit_nummer") == kredit.kredit_nummer:
             kredit_ob["zubezahlen"] = kredit.zubezahlen
-        speichere_json(datei, kreditedb)
+            kredit_ob["laufzeit_monate"] = kredit.laufzeit_monate
+    speichere_json(datei, kreditedb)
+    
+def del_kredit(kredit: Kredit, datei=KREDIT_DATEI):
+    kreditedb = lade_json(datei)
+    kreditedb = [k for k in kreditedb if k.get("kredit_nummer") != kredit.kredit_nummer]
+    speichere_json(datei, kreditedb)

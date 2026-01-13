@@ -1,9 +1,8 @@
 [
     {
-        "iban": "DE111630040",
-        "saldo": 980.0,
-        "kredite": [
-            1
-        ]
+        "iban": "DE828186219",
+        "saldo": 300.0,
+        "gesperrt": false,
+        "kredite": []
     }
 ]
