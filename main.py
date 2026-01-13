@@ -2,7 +2,7 @@ from models import Kunde, Konto, Berater, Kredit
 import random
 from file_handler import erstell_kunde, lade_kunden_emails, lade_kunde_from_email, berater_einstellen, lade_kundennr, kunden_ohne_berater, lade_alle_berater_brid, akt_berater, lad_berater_mit_brid, lade_kunde_from_kdnr, speicher_kunde, lade_konto, erstelle_konto, speicher_konto, lad_berater_mit_kunde, save_kredit, lade_kredit, akt_kredit, lade_kredite, lade_konto_mit_kreditnummer, del_kredit
 from auth import check_log_pw, check_log_pw_b
-from request_handler import kredit_request, load_request
+from request_handler import kredit_request, load_request, del_request
 
 def register_k():
     while True:
@@ -134,7 +134,6 @@ def app_kon(kunde: Kunde, konto: Konto):
                 if wahl == 1:
                     kredithoehe = int(input("Kredithöhe: "))
                     laufzeit = int(input("Gewünschte Laufzeit in monaten: "))
-
                     kredit_request(berater.brid, konto_c.iban, kredithoehe, laufzeit)
 
                 elif wahl == 2:
@@ -328,6 +327,7 @@ def requestverwaltung(b: Berater):
                 konto.add_kredite(kredit)
                 speicher_konto(konto)
                 save_kredit(kredit)
+                del_request(wahl)
                 input("Kredit wurde genehmight! Drücke Enter")
                 break
 
@@ -348,7 +348,6 @@ def k_wahl():
             app_k(kunde)
         elif wahl == 3:
             break
-
 
 def menu():
     while True:

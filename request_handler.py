@@ -42,3 +42,8 @@ def load_request(berater: Berater, datei=REQUEST_DATEI):
             requestlist.append(request)
     return requestlist
 
+def del_request(request_index, datei=REQUEST_DATEI):
+    requestdb = lade_json(datei)
+    requestdb.pop(request_index)
+    speichere_json(datei, requestdb)
+    

@@ -86,7 +86,3 @@ class Berater:
     
     def kredit_genemigen(self, kunde=None):
         pass
-
-
-        
-        
